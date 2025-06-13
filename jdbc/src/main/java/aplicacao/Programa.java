@@ -17,7 +17,12 @@ public class Programa {
         try {
             conn = DB.getConnection();
 
-            st = conn.prepareStatement("INSERT INTO seller " + "(Name, Email, BirthDate, BaseSalary, DepartmentId)" + "VALUES " + "(?, ?, ?, ?, ?)");
+            st = conn.prepareStatement(
+                    "INSERT INTO seller "
+                    + "(Name, Email, BirthDate, BaseSalary, DepartmentId)"
+                    + "VALUES "
+                    + "(?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
             st.setString(1, "Lavinia Venturim");
             st.setString(2,"lavinia.venturim@gmail.com");
@@ -25,9 +30,18 @@ public class Programa {
             st.setDouble(4, 3000);
             st.setInt(5, 2);
 
-            int rowsAffected = st.executeUpdate();
+            int linhaAltereda = st.executeUpdate();
 
-            System.out.println("Pronto! Linhas afetadas: " + rowsAffected);
+            if (linhaAltereda > 0) {
+                ResultSet rs = st.getGeneratedKeys();
+                while (rs.next()) {
+                    int id = rs.getInt(1);
+                    System.out.println("Pronto! ID = " + id);
+                }
+            }
+            else {
+                System.out.println("Nenhuma Linha Alterada!");
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();
